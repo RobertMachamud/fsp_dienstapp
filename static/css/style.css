@@ -1,0 +1,33 @@
+.anw-name
+{
+    height: 2em;
+    border-bottom: solid 1px rgba(0,0,0,.5);
+    transition: .4s;
+    background: #fafafa;
+}
+
+.anw-names-list
+{
+    background: lightslategray;
+    margin: 2em 0;
+}
+
+/* .anw-name:hover
+{
+    background: #525252;
+    color: #fff;
+} */
+
+#to-backend-not-anw
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1000;
+    cursor: default;
+    border: none !important;
+    outline: none !important;
+    color: transparent !important;
+    pointer-events: none !important;
+    background: transparent !important;
+}

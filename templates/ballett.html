@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+    {% for dancer in ballett %}
+        <p>{{ dancer.personal_data.name.full_name }} - {{ dancer.e }} - {{ dancer.urlaubstage }} - {{ dancer.personal_data.contact_data.email }}, {{ dancer.personal_data.contact_data.adress.street }} {{ dancer.personal_data.contact_data.adress.house_nr }} {{ dancer.personal_data.contact_data.adress.plz }} {{ dancer.personal_data.contact_data.adress.city }} </p>
+        
+    {% endfor %}
+
+
+    {% for kranker in kranke %}
+        <p>{{ kranker.personal_data.name.full_name }}, {{ kranker.personal_data.age }} </p>
+        
+    {% endfor %}
+
+   {{ kranke[0] }}
+{% endblock %}

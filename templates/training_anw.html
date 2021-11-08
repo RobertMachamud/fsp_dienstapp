@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% for dancer in ballett %}
+<p>{{ dancer.personal_data.name.full_name }} - {{ dancer.e }} - {{ dancer.urlaubstage }} -
+    {{ dancer.personal_data.contact_data.email }}, {{ dancer.personal_data.contact_data.address.street }}
+    {{ dancer.personal_data.contact_data.address.house_nr }} {{ dancer.personal_data.contact_data.address.plz }}
+    {{ dancer.personal_data.contact_data.address.city }} </p>
+{% endfor %}
+
+{% for e_dancer in e_today %}
+<p>{{ e_dancer.personal_data.name.full_name }} - E </p>
+{% endfor %}
+
+
+{% for kranker in kranke %}
+<p>{{ kranker.personal_data.name.full_name }}, {{ kranker.personal_data.age }} </p>
+{% endfor %}
+
+
+<br><br><br>
+
+<form method="POST" action="{{ url_for('training_anw') }}" id="abw-dancers-form">
+    <input type="text" name="bla_list" id="bla_list" value="Hello">
+    <input type="text" name="to-backend-not-anw" id="to-backend-not-anw">
+
+    <div class="anw-names-list">
+        <ul>
+            {% for abw in not_present %}
+            <li class="anw-name abw-name" data-active="inactive" data-dancerid="{{ abw._id }}"
+                data-dancername="{{ abw.personal_data.name.full_name }}" onclick="markUnmarkAnwName(event)">
+                {{ abw.personal_data.name.full_name }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="anw-names-list">
+        <ul>
+            {% for dancer in ballett %}
+            {% if dancer.ballett_training.e_used_today != true and dancer.status != "krank" %}
+            <li class="anw-name" data-active="inactive" data-dancerid="{{ dancer._id }}"
+                data-dancername="{{ dancer.personal_data.name.full_name }}" onclick="markUnmarkAnwName(event)">
+                {{ dancer.personal_data.name.full_name }}
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <button type="submit" onclick="submitAnwList(event)" class="bttn sub-anw-btn">Fertig</button>
+    <!-- <div onclick="">Click me</div> -->
+</form>
+
+
+
+
+
+
+{% endblock %}

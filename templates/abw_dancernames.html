@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% for abw_name in abw_names %}
+
+    <p>{{ abw_name.personal_data.name.full_name }}</p>
+
+{% endfor %}
+
+{% endblock %}
