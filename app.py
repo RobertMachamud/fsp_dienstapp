@@ -24,6 +24,124 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/register_dancer", methods=["GET", "POST"])
+def register_dancer():
+    if request.method == "POST":
+        # checking if username already exist in db
+        user_exists = mongo.db.ballett.find_one(
+            {"$and": [
+                {"f_name": request.form.get("f_name").lower()},
+                {"l_name": request.form.get("l_name").lower()},
+                {"email": request.form.get("email")}
+            ]}
+        )
+        # redirecting back if user already exists
+        if user_exists:
+            flash("Sorry, this Dancer is already registered")
+            return redirect(url_for("register_dancer"))
+
+        # Obj for dancer
+        register_dancer = {
+            "personal_data": {
+                "name": {
+                    "f-name": request.form.get("f-name").lower(),
+                    "l-name": request.form.get("l-name").lower(),
+                },
+                "contact_data": {
+                    "address": {
+                        "street": request.form.get("street").lower(),
+                        "h-number": request.form.get("h-number"),
+                        "plz": request.form.get("plz"),
+                        "city": request.form.get("city").lower(),
+                    },
+                    "email": request.form.get("email").lower(),
+                    "dob": request.form.get("dob").lower(),
+                    "tel": request.form.get("tel"),
+                }
+            },
+            "nationality": request.form.get("nationality").lower(),
+            "pob": request.form.get("pob").lower(),
+            "sex": request.form.get("sex").lower(),
+            "gender": request.form.get("gender").lower(),
+            "parent": request.form.get("parent"),
+            "e": 0,
+            "dances": {
+                "all_dances": [],
+                "amt_dances": 0,
+                "a_cast": [],
+                "b_cast": [],
+                "b_cast_counter": [],
+            },
+            "ballett_training": {
+                "e_dates": [],
+                "present": True,
+                "e_used_today": False,
+            },
+            "urlaubstage": 0,
+            "status": "present",
+            "personal_messenges": [],
+            "notes": []
+        }
+        # creating and adding to obj above - full name and short form
+        first_name = register_dancer["personal_data"]["name"]["f_name"]
+        last_name = register_dancer["personal_data"]["name"]["l_name"]
+        # full name
+        register_dancer["personal_data"]["name"]["full_name"] = first_name + last_name
+        # short form
+        register_dancer["personal_data"]["name"]["short_form"] = first_name + last_name[0]
+
+        # creating and adding to obj above - username (combination of full name & rand num)
+        username = first_name + last_name + randint(0,9)
+        # username
+        register_dancer["personal_data"]["name"]["username"] = username
+
+        # creating and adding to obj above - password (full name, no space)
+        register_dancer["password"] = generate_password_hash(
+            first_name + last_name)
+
+        # inserting/adding new dancer to DB
+        mongo.db.ballett.insert_one(register_dancer)
+
+        # putting new user into session cookie
+        session["user"] = username
+        return redirect(url_for("/", username=session["user"]))
+
+    return render_template("register_dancer.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        # checking if username in db
+        user_exists = mongo.db.users.find_one(
+            {"email": request.form.get("email")})
+
+        if user_exists:
+            # checking if password is matching user input
+            if check_password_hash(
+                    user_exists["password"], request.form.get("password")):
+                session["user"] = user_exists["password"]
+                # flash()
+                return redirect(url_for("/", username=session["user"]))
+            else:
+                flash("Username and/or Password incorrect")
+                return redirect(url_for("login"))
+
+        else:
+            # in case username doesn't exists
+            flash("Username and/or Password incorrect")
+            return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    # removing user from sessions cookies
+    session.pop("user")
+    return redirect(url_for("login"))
+
+
 @app.route("/ballett")
 def ballett():
     # lists of whole ballett
@@ -32,9 +150,17 @@ def ballett():
     return render_template("ballett.html", ballett=ballett, kranke=kranke)
 
 
-@app.route("/abw_dancernames")
+@app.route("/abw_dancernames", methods=["GET", "POST"])
 def abw_dancernames():
     abw_names = mongo.db.ballett.find({"ballett_training.present": False})
+
+    if request.method == "POST":
+        print("hellooooooooooo")
+        mongo.db.ballett.updateMany({"ballett_training.present": False}, {"$set": { "ballett_training.present": True }})
+        return redirect(url_for("training_anw"))
+        # all_abw_dancers = mongo.db.find({"ballett_training.present": False})
+        # for abw_dancer in all_abw_dancers:
+
     return render_template("abw_dancernames.html", abw_names=abw_names)
 
 

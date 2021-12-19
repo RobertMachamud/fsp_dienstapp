@@ -21,9 +21,9 @@
 <br><br><br>
 
 <form method="POST" action="{{ url_for('training_anw') }}" id="abw-dancers-form">
-    <input type="text" name="bla_list" id="bla_list" value="Hello">
     <input type="text" name="to-backend-not-anw" id="to-backend-not-anw">
-
+<input type="date">
+<input type="month">
     <div class="anw-names-list">
         <ul>
             {% for abw in not_present %}
@@ -47,7 +47,7 @@
         </ul>
     </div>
 
-    <button type="submit" onclick="submitAnwList(event)" class="bttn sub-anw-btn">Fertig</button>
+    <button type="submit" class="bttn sub-anw-btn">Fertig</button>
     <!-- <div onclick="">Click me</div> -->
 </form>
 

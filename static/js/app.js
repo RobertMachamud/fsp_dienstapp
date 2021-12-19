@@ -26,4 +26,4 @@ const submitAnwList = () => {
     toBackendNotAnwInput.value = res;
 }
 
-abwDancersForm.addEventListener("submit", submitAnwList);
+// abwDancersForm.addEventListener("submit", submitAnwList);
